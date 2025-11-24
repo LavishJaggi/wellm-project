@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellm - Select Persona</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* --- Global Variables (Copied from style.css for consistency) --- */
+        :root {
+            --primary-color: #f59e0b; /* Orange from screenshots */
+            --primary-color-hover: #d97706;
+            --secondary-color: #3b82f6; /* Blue from chart */
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-main: #f9faff;
+            --bg-card: #ffffff;
+            --border-color: #e5e7eb;
+            --error-color: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --transition-all: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- Basic Reset & Body --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* --- NEW: Responsive Header Bar for Logos only --- */
+        #header-bar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            flex-wrap: wrap; 
+        }
+
+        .header-logo-group img {
+            /* 💥 INCREASED LOGO SIZE 💥 */
+            max-height: 60px; /* Bigger size for both logos */
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        /* --- Moved Heading/Text Group Styles (Now Centered in Login Container) --- */
+        .centered-header-text {
+            text-align: center;
+            margin-bottom: 1.5rem; 
+        }
+        
+        .centered-header-text h3 {
+            /* 💥 INCREASED SIZE AND BOLDNESS 💥 */
+            font-size: 3rem; 
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+            font-weight: 600; /* Made bolder */
+        }
+
+        .centered-header-text p {
+             /* 💥 SLIGHTLY INCREASED SOCIAL LINKS SIZE 💥 */
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        /* --- END NEW CENTERED HEADER --- */
+
+        /* --- Login Container (Central Content) --- */
+        .login-container {
+            width: 100%;
+            max-width: 500px; 
+            text-align: center;
+        }
+
+        header {
+            display: none; 
+        }
+
+        .login-container h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            margin-top: 1rem; 
+        }
+
+        .login-container p {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        /* --- Persona Selection Grid and other styles remain unchanged for main logic --- */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .persona-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 2rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-all);
+            border: 2px solid transparent;
+        }
+
+        .persona-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .persona-card.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+        }
+
+        .persona-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .persona-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* --- Login Form --- */
+        .login-form-container {
+            display: none;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            text-align: left;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #loginForm label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        #loginForm input[type="password"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition-all);
+        }
+
+        #loginForm input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        #errorMessage {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            min-height: 1.25em;
+            margin-top: 0.5rem;
+        }
+
+        /* --- Unlock Button --- */
+        #unlockButton {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 0.85rem 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-all);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        #unlockButton:hover {
+            background-color: var(--primary-color-hover);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #unlockButton .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -10px;
+            margin-left: -10px;
+        }
+
+        #unlockButton.loading .spinner {
+            display: block;
+        }
+
+        #unlockButton.loading .btn-text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Responsive Breakpoint --- */
+        @media (max-width: 768px) {
+            #header-bar {
+                flex-direction: column;
+                align-items: center; 
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .centered-header-text h3 {
+                 font-size: 1.5rem; /* Scale down for mobile */
+            }
+            .centered-header-text p {
+                 font-size: 1rem; /* Scale down for mobile */
+            }
+
+            .persona-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .login-container {
+                padding: 0.5rem;
+            }
+            .login-form-container, .persona-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-bar">
+        <div class="header-logo-group">
+            <img src="assets/wellm-logo.png" alt="Wellm Logo" 
+                 onerror="this.onerror=null; this.src='https://placehold.co/100x60/f59e0b/ffffff?text=Wellm'">
+        </div>
+
+        <div class="header-logo-group">
+            <img src="assets/lifeline-logo.png" alt="Lifeline Logo"
+                 onerror="this.onerror=null; this.src='https://placehold.co/100x60/3b82f6/ffffff?text=Lifeline'">
+        </div>
+    </div>
+    <div class="login-container">
+        <header style="display: none;"></header>
+
+        <div class="centered-header-text">
+            <h3>Social Media Content Creator - AGENT 007</h3>
+            <p>Facebook | Instagram | Twitter | Youtube </p>
+        </div>
+        <h2>Login to Your Persona</h2>
+        <p>Choose the profile you want to manage.</p>
+
+        <div class="persona-grid">
+            <div class="persona-card" data-persona-id="Remon" data-persona-name="Remon">
+                <i class="fas fa-chart-line"></i>
+                <h3>Remon</h3>
+            </div>
+            <div class="persona-card" data-persona-id="lifeline" data-persona-name="lifeline">
+                <i class="fas fa-coffee"></i>
+                <h3>lifeline</h3>
+            </div>
+        </div>
+
+        <div class="login-form-container" id="loginFormContainer">
+            <form id="loginForm">
+                <h3 id="loginTitle" style="margin-bottom: 1.5rem; text-align: center;">Unlock 'Expert Analyst'</h3>
+                <label for="secretKey">Secret Key</label>
+                <input type="password" id="secretKey" placeholder="Enter your secret key" required>
+                <div id="errorMessage"></div>
+
+                <button type="submit" id="unlockButton">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Unlock & Continue</span>
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const N8N_VALIDATE_URL = "https://lavish026.app.n8n.cloud/webhook/2009853b-8bb7-4cc4-8207-bcae5f252cb3";
+
+        // --- SCRIPT START ---
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DOM ELEMENTS ---
+            const personaCards = document.querySelectorAll('.persona-card');
+            const loginFormContainer = document.getElementById('loginFormContainer');
+            const loginForm = document.getElementById('loginForm');
+            const loginTitle = document.getElementById('loginTitle');
+            const secretKeyInput = document.getElementById('secretKey');
+            const unlockButton = document.getElementById('unlockButton');
+            const errorMessage = document.getElementById('errorMessage');
+
+            let selectedPersonaId = null;
+
+            // --- EVENT LISTENER 1: Persona Card Click ---
+            personaCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    selectedPersonaId = card.dataset.personaId;
+                    const personaName = card.dataset.personaName;
+
+                    personaCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+
+                    loginTitle.textContent = `Unlock '${personaName}'`;
+                    secretKeyInput.value = '';
+                    errorMessage.textContent = '';
+                    loginFormContainer.style.display = 'block';
+                });
+            });
+
+            // --- EVENT LISTENER 2: Form Submission ---
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const secretKey = secretKeyInput.value;
+
+                if (!selectedPersonaId || !secretKey.trim()) {
+                    errorMessage.textContent = 'Please select a persona and enter a key.';
+                    return;
+                }
+
+                unlockButton.classList.add('loading');
+                unlockButton.disabled = true;
+                errorMessage.textContent = '';
+
+                validatePersona(selectedPersonaId, secretKey);
+            });
+
+            /**
+             * Calls the n8n workflow to validate the credentials.
+             */
+            async function validatePersona(personaId, secretKey) {
+                try {
+                    // --- REAL N8N API CALL ---
+                    const response = await fetch(N8N_VALIDATE_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "Persona-ID": personaId,
+                            "Secret-Key": secretKey
+                        })
+                    });
+
+                    let result;
+                    if (response.status === 401) {
+                         result = { status: 'error', message: 'Invalid Secret Key.' };
+                    } else if (!response.ok) {
+                         throw new Error('An unknown server error occurred.');
+                    } else {
+                        result = await response.json();
+                    }
+
+                    // Handle the result
+                    if (result.status === 'success') {
+                        // --- SUCCESS! ---
+                        localStorage.setItem('persona_id', personaId);
+                        localStorage.setItem('secret_key', secretKey);
+
+                        // --- Pointing to index.html ---
+                        window.location.href = 'index.html';
+
+                    } else {
+                        // --- FAILURE ---
+                        throw new Error(result.message || 'Invalid Secret Key.');
+                    }
+
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    unlockButton.classList.remove('loading');
+                    unlockButton.disabled = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellm Social Media Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* CRITICAL FIX: Status banner styling */
+        .status-banner {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #ffaa33;
+            color: #333;
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        #bannerMessage {
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        /* Toast Container */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background-color: #333;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateX(100%);
+            animation: toastSlideIn 0.5s ease forwards;
+            min-width: 280px;
+            max-width: 350px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background-color: #198754;
+        }
+        
+        .toast.error {
+            background-color: #dc3545;
+        }
+        
+        .toast.info {
+            background-color: #0d6efd;
+        }
+        
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes toastSlideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+
+    <div class="status-banner" id="statusBanner">
+        <span id="bannerMessage">Processing your request...</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="assets/wellm-logo.png" alt="Wellm Logo" id="headerLogo">
+                <img src="assets/liFeline-logo.png" alt="Lifeline Logo" id="headerLogo1">
+            </div>
+            
+            <h1 class="welcome-title">Welcome, <span id="personaName">Agent</span>!</h1>
+            <p class="header-subtitle">Social Media Content Creator - AGENT 007</p>
+            <p class="header-subtitle1">Facebook | Instagram | Twitter | LinkedIn | Youtube-short | Youtube-long</p>
+        </header>
+
+        <nav class="nav-container">
+            <a href="#" class="nav-link active" data-page="create">
+                <i class="fas fa-pencil-alt nav-icon"></i> Create Post
+            </a>
+            <a href="#" class="nav-link" data-page="review">
+                <i class="fas fa-tasks nav-icon"></i> Review Pipeline
+            </a>
+        </nav>
+
+        <main>
+            <section id="createPage" class="page active">
+                <div class="card">
+                    <h2><i class="fas fa-pencil-alt card-icon"></i> Start a New Post</h2>
+                    <form id="createPostForm">
+                        
+                        <label for="topic-input" class="main-label">Enter your instructions or topic:</label>
+                        <textarea id="topic-input" name="topic" rows="5" placeholder="e.g., 'Create a post about this image, focusing on...'" required></textarea>
+                        
+                        <label for="file-input" class="file-label">Add a reference file (Image, PDF, or Text)</label>
+                        
+                        <div class="file-input-wrapper">
+                            <input type="file" id="file-input" accept=".txt,.md,.text,.log,.pdf,.png,.jpg,.jpeg,.webp" hidden>
+                            <button type="button" class="choose-file-btn" id="chooseFileBtn">
+                                <i class="fas fa-upload"></i> Choose File
+                            </button>
+                            <div id="file-display-area" class="file-display-area"></div>
+                        </div>
+
+                        <button type="submit" id="create-post-btn">
+                            <span class="spinner" id="btn-spinner"></span>
+                            <span class="btn-text" id="btn-text">Generate Content</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="reviewPage" class="page">
+                <div class="card">
+                    <h2><i class="fas fa-tasks card-icon"></i> Content Awaiting Your Review</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Topic</th>
+                                    <th>Generated Content Preview</th>
+                                    <th>Status</th>
+                                    <th>Source</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviewTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            
+            <h2><i class="fas fa-edit"></i> Review Content</h2>
+            
+            <div class="modal-context-details" id="modalContextDetails">
+                </div>
+            
+            <div class="modal-body" id="modalContentContainer">
+                </div>
+            
+            <div class="modal-footer">
+                <button class="action-btn regenerate-btn" onclick="window.regenerateGlobal()">
+                    <i class="fas fa-sync-alt"></i> Regenerate Selected (or All)
+                </button>
+                <button class="action-btn approve-btn" id="approveBtn">
+                    <i class="fas fa-check-circle"></i> Approve & Publish
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
