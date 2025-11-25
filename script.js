@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ================= CONFIGURATION =================
     const CONFIG = {
         URLS: {
-            CREATE: 'https://lavish026.app.n8n.cloud/webhook/333ce980-cad1-4c54-8017-334739372f77', 
-            GET_PENDING: 'https://lavish026.app.n8n.cloud/webhook/c98532ef-8a73-4e10-8961-fe901470510c',
-            APPROVE: 'https://lavish026.app.n8n.cloud/webhook/024b69fd-35f5-4cef-a8a6-a263a3fe303a',
-            REGENERATE: 'https://lavish026.app.n8n.cloud/webhook/53cdf3cb-1233-467c-8396-c0344286ec09',
-            DELETE: 'https://lavish026.app.n8n.cloud/webhook/bf2f7872-4902-4bce-994d-1dbf247ff193',
-            GET_STATUS: 'https://lavish026.app.n8n.cloud/webhook/8b49c8ca-7b63-4492-84e7-4b6278454cda',
-            UPLOAD_IMAGE: 'https://lavish026.app.n8n.cloud/webhook/7531fd31-8ed7-4fae-8e23-e6928fd8990c' // ← ADD YOUR NEW WEBHOOK URL HERE
+            CREATE: 'https://lavish02.app.n8n.cloud/webhook/333ce980-cad1-4c54-8017-334739372f77', 
+            GET_PENDING: 'https://lavish02.app.n8n.cloud/webhook/c98532ef-8a73-4e10-8961-fe901470510c',
+            APPROVE: 'https://lavish02.app.n8n.cloud/webhook/024b69fd-35f5-4cef-a8a6-a263a3fe303a',
+            REGENERATE: 'https://lavish02.app.n8n.cloud/webhook/53cdf3cb-1233-467c-8396-c0344286ec09',
+            DELETE: 'https://lavish02.app.n8n.cloud/webhook/bf2f7872-4902-4bce-994d-1dbf247ff193',
+            GET_STATUS: 'https://lavish02.app.n8n.cloud/webhook/8b49c8ca-7b63-4492-84e7-4b6278454cda',
+            UPLOAD_IMAGE: 'https://lavish02.app.n8n.cloud/webhook/7531fd31-8ed7-4fae-8e23-e6928fd8990c' // ← ADD YOUR NEW WEBHOOK URL HERE
         }
     };
 
@@ -807,4 +807,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     setPersistentStatus('', false);
+
 });
